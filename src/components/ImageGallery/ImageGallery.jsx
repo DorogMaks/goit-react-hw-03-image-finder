@@ -28,10 +28,6 @@ export class ImageGallery extends Component {
       prevState.searchQuery !== searchValue ||
       prevState.currentPage !== currentPage
     ) {
-      if (currentPage === 1) {
-        this.setState({ searchData: [] });
-      }
-
       this.setState({ status: 'pending' });
 
       const fetchResults = await fetchImages(searchValue, currentPage);
@@ -44,11 +40,16 @@ export class ImageGallery extends Component {
         return this.setState({ status: 'empty' });
       }
 
-      this.setState(prev => ({
-        searchData: [...prev.searchData, ...fetchResults.hits],
+      const collectionHits =
+        currentPage === 1
+          ? fetchResults.hits
+          : [...this.state.searchData, ...fetchResults.hits];
+
+      this.setState({
+        searchData: collectionHits,
         totalHits: fetchResults.totalHits,
         status: 'resolved',
-      }));
+      });
     }
   }
 
@@ -80,7 +81,7 @@ export class ImageGallery extends Component {
       );
     }
 
-    if (status === 'resolved') {
+    if (status === 'resolved' || (status === 'pending' && totalHits > 0)) {
       const totalHitsCount = totalHits - currentPage * 12;
 
       return (
