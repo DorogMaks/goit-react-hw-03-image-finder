@@ -25,7 +25,7 @@ export class ImageGallery extends Component {
       return;
 
     if (
-      prevState.searchQuery !== searchValue ||
+      prevState.searchValue !== searchValue ||
       prevState.currentPage !== currentPage
     ) {
       if (currentPage === 1) {
